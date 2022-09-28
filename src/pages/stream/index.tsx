@@ -9,6 +9,7 @@ import { IRoom, IStreamDta } from './type'
 
 export default function index() {
   //数据层
+
   const [query,setQuery]=useState<IStreamDta>({
     nowPage:0,
     pageCount:0
@@ -54,7 +55,11 @@ export default function index() {
        setRooms([...rooms,...res.data.data.list])
       }
     ).catch(err=>{
-      console.log(err)
+    Taro.showToast({
+        title: '网络错误',
+        icon: 'error',
+        duration: 2000
+      })
     })
     }
   })
@@ -62,7 +67,11 @@ export default function index() {
   <view>
     {showSkeleton?
      <Grid columnNum={2}>
-    {rooms.map(room=> <GridItem className={stream.room}>
+    {rooms.map(room=> <GridItem className={stream.room} onClick={
+      ()=>{Taro.navigateTo({url:`/pages/live/index?roomSrc=${room.roomSrc}&roomName=${room.roomName}
+        &avaterUrl=${room.avatar}&nickname=${room.nickname}
+        `})}
+    }>
       <view className={stream.hn}>
         <text>{room.hn}</text>
       </view>
@@ -78,3 +87,4 @@ export default function index() {
   </view>
   )
 }
+

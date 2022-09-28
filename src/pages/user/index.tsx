@@ -6,7 +6,7 @@ import React from 'react'
 
 export default function index() {
   return (
-    <view>index</view>
-  )
+    <view><view>hello</view></view>
+    )
 }
 

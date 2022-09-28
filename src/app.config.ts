@@ -3,7 +3,8 @@ export default defineAppConfig({
     'pages/home/index',
     'pages/stream/index',
     'pages/user/index',
-    'pages/news/index'
+    'pages/news/index',
+    'pages/live/index'
   ],
   tabBar:{
     list:[{
