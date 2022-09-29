@@ -1,14 +1,10 @@
-interface IVideo {
-  coverUrl:string
-  duration: string
-  id: number
-  playUrl:string,
-  title: string,
-  userName: string
-  userPic: string
+interface INew {
+image:string
+hint:string
+thumbnail:string
+id:string
+title:string
+url:string
 }
-interface INewsData{
-    list:IVideo[],
-    total:number
-}
-export default INewsData;
+
+export default INew;

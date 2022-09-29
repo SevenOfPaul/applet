@@ -11,7 +11,7 @@ export default function index() {
   //数据层
 
   const [query,setQuery]=useState<IStreamDta>({
-    nowPage:0,
+    nowPage:1,
     pageCount:0
   })
   const [rooms,setRooms]=useState<IRoom[]>([])
@@ -19,48 +19,47 @@ export default function index() {
   const [showSkeleton ,changeShow]=useState<boolean>(false)
   //拿取数据
   useEffect(()=>{
-    Taro.request({url:baseUrl.stream}).then(
-      res=>{
+    try{
+(async()=>{
+  let  res=await Taro.request({url:baseUrl.stream})
     if(res.statusCode!==200) throw new Error(res.errMsg)
    let result=[...res.data.data.list]
-    Taro.request({url:baseUrl.stream,data:{page:query.nowPage+1}}).then(
-      res=>{
+    res=await Taro.request({url:baseUrl.stream,data:{page:query.nowPage+1}})
     if(res.statusCode!==200) throw new Error(res.errMsg)
-    res.data.data.list=[...result,...res.data.data.list]
+    result=[...result,...res.data.data.list]
     changeShow(!showSkeleton)
     setQuery({nowPage:query.nowPage++,pageCount:res.data.data.pageCount})
-     setRooms(res.data.data.list)
-      }
-    )
-      }
-    ).catch(err=>{
-      console.log(err)
-    })
+     setRooms(result)
+  })()
+}catch(e){
+    Taro.showToast({
+        title: '网络错误',
+        icon: 'error',
+        duration: 2000
+      })
+   }
   },[])
   //触底更新
-  useReachBottom(()=>{
+  useReachBottom(async()=>{
     if(query.nowPage>query.pageCount){
       Taro.showToast({
         title: '数据都用光啦',
         icon: 'error',
         duration: 2000
       })
- 
     }else{
-    Taro.request({url:baseUrl.stream,data:{page:query.nowPage+1}}).then(
-      res=>{
+      try{
+    let res=await  Taro.request({url:baseUrl.stream,data:{page:query.nowPage+1}})
     if(res.statusCode!==200) throw new Error(res.errMsg)
-    console.log(res)
      setQuery({nowPage:query.nowPage+1,pageCount:res.data.data.pageCount})
        setRooms([...rooms,...res.data.data.list])
-      }
-    ).catch(err=>{
-    Taro.showToast({
+     }catch(e){
+        Taro.showToast({
         title: '网络错误',
         icon: 'error',
         duration: 2000
       })
-    })
+     }
     }
   })
   return (
@@ -75,7 +74,7 @@ export default function index() {
       <view className={stream.hn}>
         <text>{room.hn}</text>
       </view>
-      <img className={stream.roomPic} src={`https://images.weserv.nl/?url=${room.verticalSrc}`} />
+      <img className={stream.roomPic} src={`${room.roomSrc}`} />
       <view className={stream.nickname}>
         <text>{room.nickname}</text>
       </view>
